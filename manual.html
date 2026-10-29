@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PX-42F MIDI Player Manual</title>
+<style>
+:root {
+  --bg: #fbfaf7;
+  --fg: #1d1d1f;
+  --muted: #5d5d63;
+  --rule: #dcd9d2;
+  --panel: #f1efe9;
+  --accent: #2f5d8a;
+  --lcd-bg: #e9eae2;
+  --code-bg: #ecebe6;
+  --key: #2b2c30;
+  --key-fg: #f2f1ec;
+  --key-shift: #c98a2e;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17181a;
+    --fg: #e8e7e3;
+    --muted: #a3a29d;
+    --rule: #34353a;
+    --panel: #212226;
+    --accent: #8ab4dd;
+    --lcd-bg: #d9dbd1;
+    --code-bg: #26272b;
+    --key: #3a3b40;
+    --key-fg: #f2f1ec;
+    --key-shift: #e0a24a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17181a;
+  --fg: #e8e7e3;
+  --muted: #a3a29d;
+  --rule: #34353a;
+  --panel: #212226;
+  --accent: #8ab4dd;
+  --lcd-bg: #d9dbd1;
+  --code-bg: #26272b;
+  --key: #3a3b40;
+  --key-fg: #f2f1ec;
+  --key-shift: #e0a24a;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+main { max-width: 900px; margin: 0 auto; padding: 32px 16px 80px; }
+header.cover { border-bottom: 2px solid var(--fg); padding-bottom: 20px; margin-bottom: 28px; }
+header.cover h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 6px; letter-spacing: -0.01em; }
+header.cover p { margin: 0; color: var(--muted); }
+h2 { font-size: 1.45rem; margin: 48px 0 12px; padding-top: 8px; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.12rem; margin: 28px 0 8px; }
+h4 { font-size: 1rem; margin: 20px 0 6px; }
+p, ul, ol { margin: 0 0 14px; }
+li { margin: 4px 0; }
+a { color: var(--accent); }
+code, kbd, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+pre { background: var(--code-bg); padding: 12px 14px; border-radius: 6px; overflow-x: auto; margin: 0 0 16px; line-height: 1.45; font-size: 0.9rem; }
+pre code { background: none; padding: 0; }
+kbd {
+  display: inline-block; padding: 0 6px; border: 1px solid var(--rule); border-bottom-width: 2px;
+  border-radius: 4px; background: var(--panel); line-height: 1.5; white-space: nowrap;
+}
+nav.toc { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 18px; margin-bottom: 8px; }
+nav.toc h2 { border: 0; margin: 0 0 6px; padding: 0; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+nav.toc ol { margin: 0; padding-left: 22px; columns: 2; column-gap: 32px; }
+@media (max-width: 560px) { nav.toc ol { columns: 1; } }
+.table-wrap { overflow-x: auto; margin: 0 0 16px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+th, td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--rule); }
+th { font-weight: 600; background: var(--panel); }
+td code { white-space: nowrap; }
+.note { border-left: 3px solid var(--accent); background: var(--panel); padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 0 0 16px; }
+.warn { border-left-color: var(--key-shift); }
+figure { margin: 8px 0 20px; }
+figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
+img.shot {
+  display: block; width: 100%; max-width: 500px; height: auto;
+  image-rendering: pixelated; image-rendering: crisp-edges;
+  border: 6px solid #3a3b3e; border-radius: 6px; background: var(--lcd-bg);
+}
+img.map { display: block; max-width: 100%; height: auto; image-rendering: pixelated; border: 1px solid var(--rule); background: #fff; }
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px 18px; margin: 8px 0 18px; }
+.shots figure { margin: 0; }
+
+/* API reference: one block per function */
+.fn { border: 1px solid var(--rule); border-radius: 8px; margin: 0 0 16px; overflow: hidden; }
+.fn > pre { margin: 0; border-radius: 0; border-bottom: 1px solid var(--rule); font-weight: 600; }
+.fn > div { padding: 10px 14px 2px; }
+.fn dl { display: grid; grid-template-columns: max-content 1fr; gap: 2px 14px; margin: 0 0 12px; font-size: 0.95rem; }
+.fn dt { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em; color: var(--muted); }
+.fn dd { margin: 0; }
+@media (max-width: 560px) { .fn dl { grid-template-columns: 1fr; } .fn dd { margin-bottom: 6px; } }
+.fn pre { font-weight: 400; }
+
+/* the keyboard map */
+.kbd-map { display: grid; grid-template-columns: repeat(30, 1fr); gap: 6px; max-width: 560px; margin: 10px 0 8px; }
+.kbd-map .k {
+  background: var(--key); color: var(--key-fg); border-radius: 6px; padding: 6px 2px 4px;
+  text-align: center; line-height: 1.15; min-height: 52px;
+}
+.kbd-map .k b { display: block; font-size: 0.95rem; }
+.kbd-map .k span { display: block; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.72rem; opacity: 0.8; }
+.kbd-map .k i { display: block; font-style: normal; font-size: 0.62rem; color: var(--key-shift); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+.kbd-map .s5 { grid-column: span 5; }
+.kbd-map .s6 { grid-column: span 6; }
+.kbd-map .on { outline: 2px solid var(--key-shift); }
+footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<main>
+
+<header class="cover">
+<h1>PX-42F MIDI Player</h1>
+<p>User manual: playing MIDI songs on the calculator's speaker, several instruments at once.</p>
+</header>
+
+<nav class="toc">
+<h2>Contents</h2>
+<ol>
+  <li><a href="#what">What it is</a></li>
+  <li><a href="#install">Installing it</a></li>
+  <li><a href="#songs">Adding songs</a></li>
+  <li><a href="#screen">The screen</a></li>
+  <li><a href="#keys">The keys</a></li>
+  <li><a href="#sound">How it sounds</a></li>
+  <li><a href="#tips">Tips</a></li>
+  <li><a href="#messages">Messages</a></li>
+  <li><a href="#limits">What it doesn't do</a></li>
+  <li><a href="#dev">For developers</a></li>
+</ol>
+</nav>
+
+<!-- ============================================================ -->
+<h2 id="what">1. What it is</h2>
+
+<p>MIDI Player plays Standard MIDI Files (<code>.mid</code>) on the PX-42F's speaker. A MIDI file is a score, not a recording: it lists which notes each instrument plays and when. The calculator has a small synthesizer in its firmware that turns the score into sound, up to <strong>24 notes at once</strong> on <strong>16 channels</strong>, with drums on channel 10.</p>
+
+<p>MIDI Player is an app: it starts from <span class="mono">Settings &rarr; Games &amp; Apps</span>. It needs firmware with app API version 4 or later, the first that has the synthesizer.</p>
+
+<div class="shots">
+<figure><img class="shot" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAAB6AQAAAAC+J3NIAAAAAmJLR0QAAd2KE6QAAAAHdElNRQfqChwSOx7ya8eHAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDI2LTEwLTI4VDE4OjU5OjMwKzAwOjAweOS6zAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyNi0xMC0yOFQxODo1OTozMCswMDowMAm5AnAAAAAodEVYdGRhdGU6dGltZXN0YW1wADIwMjYtMTAtMjhUMTg6NTk6MzArMDA6MDBerCOvAAADD0lEQVRIx+3WT2sTQRQA8IkN2Q2u2WvWrBk/QkIRK8bMRehF+hl6steeNIWlqcdCsFfFQm6e25ulh80pJhiyV8GKFZb0IlrroTPsuOObpEmbNrsDVgP+GUIyu/tj3nszO0MQUrWiWyaI2GP3uPxaRKhwxUHorksAbI6B8AQsp6BHarM1VKyNgeYQGNC7VStKgIv126fA2XOcQwihpyAHCUgNb7vu2igEtFUJsvYQGAl3e2cEeLPXTMkkC0NQMHDd3RqFeBv2wlUJbvZDzEpQfLJVGIFOI2w0HwJYbMp5gDILBjk7QjfcgyQgVCM8maiCcaOOC2eqaDiPSgDWHOVEIyTiW0MN1C1xqAAzVAWeqUDi6OPRfiwIgiAuzAzK7eZexY+Qy2XjwIucAgRBLogDia/vrG9xQNXUq8k1IXiKkEsA+OEi4nkfcH+Di3I5ZUYB29c4LpeSWjRY4piU+EF0CJlD2dDiAfGjk0xCqSQmh9Dog0xUFcqpVq+FLC+swlyG5mQwPwRcmwy0ARD9VZkEXl6zewYJ7+Eo4CeTfpKEJS0S+Pf9XlWU5vnrqBF8PwXgIBLAGOGSBAeRIyRTmgQRZfaMXsY0AURM1OXX4j/4i8AvOCd/P6BXW1kdw86tymuKP+GxXQwgDcAcAbNlngOMdleYRwYHgGDec3lQjIMFCVjesTwJdgThumPh0xB3MpU5U9CMk/ZkiDksqF6RQUfgaUXe7FZldJp3TME4a3mnIRjkQAjtOgYAVhYe4fYFUCc0s+LJHDYBiE67dSZEultJbwiWr/RHWKeQj6Gn8TjwBAudB3CTveGQT962prpY6tWMfd+0BgpiBzj+Q4CyzGlMtTno8Z8GctPEAvjrwGzLtrNVbmF+vWTjcwC2HNV13dCrVDdlz5wA2q221xGwGVhrnXkTQlC9ZRiCteHTpudHkBuX0TTreAPAJpQJz7O6YdK0gMPiQg4ScIvbC5hbgludC1VMY7HQMtpPNGbWNJRBNpobvyTylXscfvn+IXCPq5/Fe7E7fun+M0A5UVNYLBX4AdN1/c330gQ1AAAAAElFTkSuQmCC" alt="The player with a list of three songs, the second one chosen, nothing playing"><figcaption>Ready: choose a song with the arrow keys.</figcaption></figure>
+<figure><img class="shot" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAAB6AQAAAAC+J3NIAAAPxUlEQVR4AQG6D0XwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADG/Pj8APxwAAAAAAAAAAAAAAAAA/AAAAABgAAB8AnwAADu/Pz8AP5wAAAAAAAAAAAAAAAAA/gAAAABgAAD+Bv4AAD+MM4wAMYwAAAAAAAAAAAAAAAAAxgAAAABgAADGDMYAADWMMYwAMYwfMZ83AAAAAAAAAAAAxnzcfHzwAAAOCAYAADGMMYwAP4wfsb+/gAAAAAAAAAAA/v7+/n7wAAAcGBwAADGMMYwAPwwBv7G5gAAAAAAAAAAA/MbmxgZgAAA4MBwAADGMMYwAMAwfn7+wAAAAAAAAAAAA2P7m/n5gAABwIAYAADGMM4wAMAwxgbAwAAAAAAAAAAAAzMD+wMZmAADgYMYAADG/Pz8AMAw/n7+wAAAAAAAAAAAAzv7c/v5+AAD+wP4AADG/Pj8AMAwdnx8wAAAAAAAAAAAAxnzAfHY8AAD+gHwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/+D//////////////////////////////////////AAP/8B//////////////////////////////////////AAP/8Z//////////////////////////////////////AAP/8/g0eDR/////////////////////////////////AAP/8/gQEBAf////////////////////////////////AAP/8/+RE5Ef////////////////////////////////AAP/8/gTk5Of////////////////////////////////AAP/8ZOTk5Of////////////////////////////////AAP/8BATkBOf////////////////////////////////AAP/+DiTmDOf////////////////////////////////AAP/////////////////////////////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+AAAA/nAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAD+AAAA/nAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwDAAAAAwDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8DAxtwAwDBwfnwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+D4xv4A+DBw/v4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+D4xuYA+DAwwMYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8DAxsAAwDAwfP4AAAAAAAAAAAAAAAAAAAAAAAAAAAAADwDAxsAAwDAwBsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADADA/sAA/jAw/v4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAfMAA/jAw/HwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////////////////////////////////////////AAP/85/////5//z///g/////////////////////////AAP/8R/////5//z///Af////////////////////////AAP/8B/////5//////P/////////////////////////AAP/8pg0c5gw//j0f/P/////////////////////////AAP/85AQE5AQ//jwH/P/////////////////////////AAP/85ORE5OZ//zxH/Mf////////////////////////AAP/85ATk5AZ//zzn/Mf////////////////////////AAP/85Pzk5P5n/zzn/Of////////////////////////AAP/85ATkBAYH/zzn/Af////////////////////////AAP/85gzmDg8P/zzn/g/////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAPgP///4DH5////////////////////////////////AAPgP///4DH5////////////////////////////////AAPn////5/n/////////////////////////////////AAPn5yR/5/nx8DB/////////////////////////////AAPg5yA/4Pnx4CA/////////////////////////////AAPg5yM/4Pn55+c/////////////////////////////AAPn5yf/5/n58GA/////////////////////////////AAPn5yf/5/n5/yf/////////////////////////////AAPn4Cf/4Dn54CA/////////////////////////////AAPn8Gf/4Dn54HB/////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAPgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfAAPgAAAAAf/////////////////////////////////fAAPgAAAAAf/////////////////////////////////fAAPgAAAAAf/////////////////////////////////fAAPgAAAAAf/////////////////////////////////fAAPgAAAAAf/////////////////////////////////fAAPgAAAAAf/////////////////////////////////fAAPgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfAAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAPwf/Bwf/+/8H/wcH////////////////A////z////AAPgP+AgP/8/4D/gID///////////////+A////z////AAPnPOcnP/5/5zznJz///////////////+f////z////AAPmPOY/P/7/5jz+Jj///////////////+f/6PBh8HA/AAPkP+Q8f/z/5D/8ZD///////////////+B/4CAh4CA/AAPhP+E8f/n/4T/44T///////////////+A/4icz5yf/AAPjPOM/P/v/4zzx4z///////////////+c/5ycz4DB/AAPnPOcnP/P/5zzj5z///////////////+c/5yczJ/8/AAPgP+AgP+f/4D/gID///////////////+A/5yAwICA/AAPwf/Bwf+//8H/gMH////////////////B/5zB4cGB/AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAPgAcADgAcADgAcADgAcADgAcADgAcADgAcADgAcAD/AAPv/d/7v/cADv/d/7v/d/7v/cADv/d/7gAd/7v/d/7/AAPv/d/7v/cADv/d/7v/d/7v/cADv/d/7gAd/7v/d/7/AAPv/d/7v/cADv/d/7v/d/7v/cADv/d/7gAd/7v/d/7/AAPv/d/7v/cADv/d/7v/d/7v/cADv/d/7gAd/7v/d/7/AAPv/d/7v/cADv/d/7v/d/7v/cADv/d/7gAd/7v/d/7/AAPv/d/7v/cADv/d/7v/d/7v/cADv/d/7gAd/7v/d/7/AAPv/d/7v/cADv/d/7v/d/7v/cADv/d/7gAd/7v/d/7/AAPv/d/7v/cADv/d/7v/d/7v/cADv/d/7gAd/7v/d/7/AAPgAcADgAcADgAcADgAcADgAcADgAcADgAcADgAcAD/AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////AAP/////////////////////////////////////////Acc0PBnOPVNoAAAAASUVORK5CYII=" alt="The player playing a song: a progress bar, the time, the notes sounding and the channel boxes"><figcaption>Playing. (From the simulator, which only pretends to play: on the calculator the channel boxes follow the music.)</figcaption></figure>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="install">2. Installing it</h2>
+
+<p>The app is one file, <code>MIDI-Player.bin</code>. It goes in the <code>BIN/APPS</code> folder on the calculator's drive.</p>
+<ol>
+  <li>On the calculator, open <span class="mono">Settings &rarr; USB Drive &rarr; Connect to Computer</span>. A drive called <strong>PX-42F</strong> appears on the computer.</li>
+  <li>Copy <code>MIDI-Player.bin</code> into <code>BIN/APPS</code> on that drive.</li>
+  <li>Eject the drive. The calculator comes back to the menu.</li>
+  <li>Open <span class="mono">Settings &rarr; Games &amp; Apps</span> and choose <strong>MIDI-Player</strong>.</li>
+</ol>
+<p>With the drive connected and the project open in VS Code, <code>make install</code> (the <em>Install on the PX-42F</em> task) does the copying.</p>
+
+<!-- ============================================================ -->
+<h2 id="songs">3. Adding songs</h2>
+
+<p>The songs are the <code>.mid</code> files in the <code>MIDI</code> folder of the calculator's drive. The calculator makes the <code>MIDI</code> folder, with <code>SONGS</code> and <code>SOUNDS</code> inside it, the first time it starts after the update.</p>
+<ul>
+  <li><strong>Your own songs.</strong> Connect the drive (<span class="mono">Settings &rarr; USB Drive &rarr; Connect to Computer</span>), copy <code>.mid</code> files into <code>MIDI</code>, eject. They show up in the list, sorted by name, without the <code>.mid</code>.</li>
+  <li><strong>Names.</strong> At most 28 letters before the <code>.mid</code>; longer ones are left out. Folders inside <code>SONGS</code> aren't searched.</li>
+  <li><strong>How many.</strong> The list holds 64 songs.</li>
+  <li><strong>Which files.</strong> Standard MIDI Files of format 0 (one track) or 1 (several tracks), up to 128 KB. General MIDI files work best, because the instruments are picked by General MIDI program numbers (<a href="#sound">below</a>).</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="screen">4. The screen</h2>
+
+<p>From top to bottom:</p>
+<table>
+<tr><th>Where</th><th>What it shows</th></tr>
+<tr><td><strong>Title bar</strong></td><td>On the left, the name. On the right, the play mode (<strong>Repeat</strong> or <strong>Once</strong>, see <a href="#keys">the keys</a>) and the position of the chosen song in the list: <code>2/3</code> is the second of three.</td></tr>
+<tr><td><strong>The list</strong></td><td>Four songs at a time; it scrolls. The chosen song is in black. A small arrow &#9654; marks the song that is playing.</td></tr>
+<tr><td><strong>Song name</strong></td><td>The song playing. When nothing plays, a hint, or the reason the last song didn't start (<a href="#messages">messages</a>).</td></tr>
+<tr><td><strong>Progress bar</strong></td><td>How far the song has got.</td></tr>
+<tr><td><strong>Time</strong></td><td>Elapsed time and the song's length, as minutes:seconds. The length is up to the song's last note; the last notes then fade out for a moment.</td></tr>
+<tr><td><strong>Notes</strong></td><td>The number of notes sounding right now. It counts every note that still makes any sound, including ones that were just let go and are dying away, so it doesn't drop to 0 the instant the music stops. The synthesizer has 24 voices: if the number stays at 24, the song asks for more notes than it can play, and the oldest or quietest are cut.</td></tr>
+<tr><td><strong>The 16 boxes</strong></td><td>One box for each MIDI channel, channel 1 at the left. A channel is one part of the song: the melody, the bass, the chords, the drums. A box is <strong>lit for the first three quarters of each note</strong> that plays on that channel, so a short note makes a short blink and a long note a long one, and stays empty when the channel is quiet. A very short note (a drum hit) still shows for a moment. The tenth box is channel 10, the drums. Use them to see which parts are playing.</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="keys">5. The keys</h2>
+
+<table>
+<tr><th>Key</th><th>Does</th></tr>
+<tr><td><kbd>&uarr;</kbd> <kbd>&darr;</kbd></td><td>Choose a song (going past the end wraps around).</td></tr>
+<tr><td><kbd>ENTER</kbd></td><td>Play the chosen song, from the start. If another is playing, it's stopped first.</td></tr>
+<tr><td><kbd>R/S</kbd></td><td>Play the chosen song if nothing plays, or stop the one playing.</td></tr>
+<tr><td><kbd>&#9003;</kbd> (backspace)</td><td>Stop.</td></tr>
+<tr><td><kbd>&Sigma;+</kbd> (top left)</td><td>Switch between <strong>Repeat</strong> (when a song ends, the next in the list plays, and after the last the first) and <strong>Once</strong> (play the song, then stop). The player starts in Repeat.</td></tr>
+<tr><td><kbd>ON</kbd></td><td>Back to the menu. The music stops. Held for 2 seconds: the calculator turns off.</td></tr>
+</table>
+
+<p>You can move through the list while a song plays; it keeps playing until you press <kbd>ENTER</kbd> on another one. The Sleep Timer ends the app, and the music, as it does for any app.</p>
+
+<!-- ============================================================ -->
+<h2 id="sound">6. How it sounds</h2>
+
+<p>The calculator has no recorded instruments. Its synthesizer builds every note from simple waveforms, so it sounds like a good ringtone or an old computer, not like an orchestra. The speaker is small and has little bass.</p>
+
+<h3>Instruments</h3>
+<p>Each channel of a MIDI file chooses an instrument by a General MIDI program number (0&ndash;127). The synthesizer has eleven sounds and maps each program to the nearest:</p>
+<table>
+<tr><th>Programs</th><th>General MIDI instruments</th><th>Plays as</th></tr>
+<tr><td>0&ndash;5</td><td>Pianos</td><td>Piano: fast attack, fades while the key is held</td></tr>
+<tr><td>6&ndash;7, 24&ndash;28, 45&ndash;46, 104&ndash;111</td><td>Harpsichord, clavinet, acoustic and electric guitars, pizzicato, harp, sitar, banjo and other plucked ones</td><td>Plucked</td></tr>
+<tr><td>8&ndash;15, 112&ndash;119</td><td>Celesta, glockenspiel, vibraphone, marimba, bells; steel drums, percussive instruments</td><td>Bell</td></tr>
+<tr><td>16&ndash;23</td><td>Organs, accordion, harmonica</td><td>Organ: steady, no fade</td></tr>
+<tr><td>32&ndash;39, 47</td><td>Basses, timpani</td><td>Bass</td></tr>
+<tr><td>40&ndash;44, 48&ndash;51, 55</td><td>Violin, viola, cello, string ensembles, orchestra hit</td><td>Strings: slow attack, a little vibrato</td></tr>
+<tr><td>56&ndash;63</td><td>Trumpet, trombone, tuba, horns, brass</td><td>Brass</td></tr>
+<tr><td>64&ndash;71</td><td>Saxophones, oboe, bassoon, clarinet</td><td>Reed</td></tr>
+<tr><td>52&ndash;54, 72&ndash;79</td><td>Choir and voices; piccolo, flute, recorder, pan flute, whistle</td><td>Flute: soft, with vibrato</td></tr>
+<tr><td>29&ndash;31, 80&ndash;87</td><td>Overdriven and distortion guitars; square, saw and other synth leads</td><td>Lead: bright, square-like</td></tr>
+<tr><td>88&ndash;103, 120&ndash;127</td><td>Synth pads and effects, sound effects</td><td>Pad: slow and soft</td></tr>
+</table>
+
+<h3>Drums</h3>
+<p>Channel 10 is the drum kit, as in General MIDI, whatever its program. Each note number is one drum: bass drums (35, 36), snares (38, 40), toms (41&ndash;50), closed and open hi-hats (42, 44, 46), cymbals (49&ndash;59), cowbell, rim and clap; any other number gives a short click. A closed hi-hat cuts an open one short, as on a real kit.</p>
+
+<h3>What the player follows</h3>
+<ul>
+  <li>Notes with their velocity (how hard they're struck), and tempo changes.</li>
+  <li>Volume, expression and modulation (vibrato), the sustain pedal, and pitch bend (up to two semitones).</li>
+  <li>&ldquo;All notes off&rdquo;, &ldquo;all sound off&rdquo; and &ldquo;reset controllers&rdquo;.</li>
+  <li>Everything else in the file (reverb, panning, lyrics, other controllers) is skipped. The speaker is a single one, so there is no stereo.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="tips">7. Tips</h2>
+
+<ul>
+  <li><strong>Loud songs.</strong> When many notes play at once, a limiter holds the loudness down, so a full band is not louder than one instrument, only fuller. Songs with fewer notes at once sound cleaner on this speaker.</li>
+  <li><strong>Battery.</strong> The speaker draws more current than anything else in the calculator (up to about 200 mA in loud passages), and the processor runs at full speed while a song plays. Long listening on the battery empties it faster than normal use. Plug in the USB cable for long sessions.</li>
+  <li><strong>Too many notes.</strong> If a song sounds thin, watch the notes number. If it sits at 24, the song uses more voices than the calculator has. Songs written for a few instruments (ringtones, game music, simple arrangements) fit best.</li>
+  <li><strong>Where to find songs.</strong> Any <code>.mid</code> file works. If one sounds wrong, open it in a MIDI editor and check that each part uses a General MIDI program and the drums are on channel 10.</li>
+  <li><strong>Hearing a song on the computer first.</strong> The PX-42F-Plus firmware project can render a song the way the calculator plays it into a WAV file, which you can listen to on the computer: <code>tools/px_sound/run.sh OUT_DIR song.mid</code>.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="messages">8. Messages</h2>
+
+<p>When a song can't be played, the line where the song's name would be says why, and nothing plays.</p>
+<table>
+<tr><th>Message</th><th>Means</th></tr>
+<tr><td>Can't read the file</td><td>The file isn't there any more, or the drive can't be read.</td></tr>
+<tr><td>Not a MIDI file it can play</td><td>The file isn't a Standard MIDI File, or its header is damaged, or it has no music in it. (A <code>.rmi</code> file, which wraps the music in another format, is refused too.)</td></tr>
+<tr><td>Too big (over 128 KB)</td><td>The file is larger than the player accepts. Save it again with fewer tracks, or remove the parts you don't need.</td></tr>
+<tr><td>Not enough memory</td><td>The calculator's memory is too full to load the file. Quit the app, clear some memory (programs, variables) and try again.</td></tr>
+<tr><td>No songs. Copy .mid files to /MIDI on the drive</td><td>The folder is empty. Add songs as in <a href="#songs">Adding songs</a>.</td></tr>
+</table>
+<p>A damaged file that does start never crashes the calculator: the player stops the part of the file that is broken and plays what is left.</p>
+
+<!-- ============================================================ -->
+<h2 id="limits">9. What it doesn't do</h2>
+
+<ul>
+  <li>No pause or fast-forward: you stop and start again from the beginning.</li>
+  <li>No recorded instruments (samples): every sound is made by the synthesizer.</li>
+  <li>No stereo, reverb or effects.</li>
+  <li>The file can't be larger than 128 KB, and the list shows 64 songs.</li>
+  <li>While a song plays, the app shouldn't save files: writing to the drive stops the synthesizer for a moment and the sound stutters.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="dev">10. For developers</h2>
+
+<p>The synthesizer lives in the PX-42F-Plus firmware (<code>midiplay.c</code>) and any app can use it with two functions of the app API (version 4). The player is a small example of it:</p>
+<pre><code>int midi_play(const char *path);          /* a .mid file; returns at once; 0 or PX_MIDI_* */
+void midi_status(px_midi_status_t *st);   /* length_ms, elapsed_ms, channels (bit n = channel n+1), voices */</code></pre>
+<p>A song plays on the calculator's second processor, so the app goes on drawing; <code>sound_playing()</code> says when it's over and <code>sound_stop()</code> stops it. They are described in the PX-42F App Manual.</p>
+
+<table>
+<tr><th>Command</th><th>Does</th></tr>
+<tr><td><code>make</code></td><td>Builds <code>build/MIDI-Player.bin</code>.</td></tr>
+<tr><td><code>make sim</code></td><td>Runs the app on the computer, with a stand-in for the calculator that pretends a song lasts 20 seconds. Screenshots in <code>build/sim-out</code>.</td></tr>
+<tr><td><code>make install</code></td><td>Copies the <code>.bin</code> to the connected calculator.</td></tr>
+<tr><td><code>python3 tools/make_manual.py</code></td><td>Builds this manual from <code>tools/manual.src.html</code>.</td></tr>
+</table>
+
+<footer>
+PX-42F MIDI Player &middot; for PX-42F-Plus firmware with app API version 4 or later.
+</footer>
+
+</main>
+</body>
+</html>
